@@ -233,6 +233,9 @@ const MyAppIcon = new Lang.Class({
         let modifiers = event ? event.get_state() : 0;
         let focusedApp = tracker.focus_app;
 
+        // Do not consider Super to be a midifier.
+        modifiers = modifiers & ~Clutter.ModifierType.SUPER_MASK;
+
         // We don't change the CTRL-click behaviour: in such case we just chain
         // up the parent method and return.
         if (modifiers & Clutter.ModifierType.CONTROL_MASK) {
