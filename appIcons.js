@@ -277,7 +277,7 @@ const MyAppIcon = new Lang.Class({
                 if (!Main.overview._shown || modifiers){
                     // If we have button=2 or a modifier, allow minimization even if
                     // the app is not focused
-                    if (this.app == focusedApp || button == 2 || modifiers) {
+                    if (this.app == focusedApp || button == 2 || modifiers & Clutter.ModifierType.SHIFT_MASK) {
                         // minimize all windows on double click and always in the case of primary click without
                         // additional modifiers
                         let all_windows = (button == 1 && ! modifiers) || event.get_click_count() > 1
