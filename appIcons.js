@@ -430,9 +430,10 @@ const MyAppIcon = new Lang.Class({
 
             case clickAction.MINIMIZE_OR_OVERVIEW:
                 // When a single window is present, toggle minimization
-                // If only one windows is present toggle minimization, but only when trigggered with the
+                // If only one windows is present toggle minimization, but only when triggered with the
                 // simple click action (no modifiers, no middle click).
-                if (windows.length == 1 && !modifiers && button == 1) {
+                // if (windows.length == 1 && !modifiers && button == 1) {
+                if (windows.length == 1) { // experiment: also show|minimize on middle click
                     let w = windows[0];
                     if (this.app == focusedApp) {
                         // Window is raised, minimize it
@@ -443,14 +444,33 @@ const MyAppIcon = new Lang.Class({
                     }
                     // Launch overview when multiple windows are present
                 } else {
-                    shouldHideOverview = false;
-                    if (this.app == focusedApp) {
-                        // Show overview with selected app windows only
-                        this.appExposeOverview.toggleAppExposeOverview(this.actor, windows);
+                    if (windows.length <= 1) {
+                        // Focus or open new window even on modifier or middle click
+                        this.app.activate();
                     } else {
-                        // Another app is focused or all app windows are minimized -> show selected app window
+                        shouldHideOverview = false;
                         let w = windows[0];
-                        Main.activateWindow(w);
+                        // Middle or modifier click with more then one window switches overview or minimizes
+                        if (modifiers || button != 1) {
+                            if (!this.appExposeOverview.isInAppExposeOverview) {
+                                Meta.disable_unredirect_for_screen(global.screen);
+                                Main.overview._shown = false;
+                                Main.overview.visibile = false;
+                                Main.overview.animationInProgress = false;
+                                Main.overview.visibleTarget = false;
+                                Main.overview.viewSelector._showAppsButton.checked = false;
+                                Main.overview._hideDone();
+                                this.appExposeOverview.show(this.actor, windows);
+                            } else {
+                                Main.activateWindow(w);
+                            }
+                            // Left click with more than one window and not middle or modifier click toggles app expose
+                        } else if (this.app == focusedApp) {
+                            this.appExposeOverview.toggleAppExposeOverview(this.actor, windows);
+                            // Left click with other or no app selected activates window
+                        } else {
+                            Main.activateWindow(w);
+                        }
                     }
                 }
                 break;

@@ -36,7 +36,7 @@ const AppExposeOverview = new Lang.Class({
 		}
 	},
 
-	show: function(iconActor, appWindows) {
+    show: function(iconActor, appWindows) {
 		// Checked in overview "hide" event handler
 		this.isInAppExposeOverview = true;
 		// Temporary change app icon scroll to switch workspaces
@@ -78,22 +78,25 @@ const AppExposeOverview = new Lang.Class({
 			}
 		}));
 
-		Main.overview.show();
+        // Change hotcorner to show 'normal' overview, if in AppExposeOverview
+        Layout.HotCorner.prototype._toggleOverview = function() {
+            if (this._monitor.inFullscreen)
+                return;
 
-		// Change hotcorner to show 'normal' overview, if in AppExposeOverview
-		Layout.HotCorner.prototype._toggleOverview = function() {
-			if (this._monitor.inFullscreen)
-				return;
+            if (Main.overview.shouldToggleByCornerOrButton()) {
+                this._rippleAnimation();
+                Meta.disable_unredirect_for_screen(global.screen);
+                Main.overview._shown = false;
+                Main.overview.visibile = false;
+                Main.overview.animationInProgress = false;
+                Main.overview.visibleTarget = false;
+                Main.overview._hideDone();
+                Main.overview.show();
+            }
+        };
+        Main.layoutManager._updateHotCorners();
 
-			if (Main.overview.shouldToggleByCornerOrButton()) {
-				this._rippleAnimation();
-				Main.overview._shown = false;
-				Main.overview.emit('hiding');
-				Main.overview._hideDone();
-				Main.overview.show();
-			}
-		};
-		Main.layoutManager._updateHotCorners();
+        Main.overview.show();
 	},
 
 	_onOverviewHidden: function() {
