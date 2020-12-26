@@ -64,7 +64,7 @@ var AppExposeOverview = new Lang.Class({
 		};
 
 		// If second last app window closed in AppExposeOverview, activate remaining window (done in hidden event)
-		this.destroyWindowId = global.window_manager.connect('destroy', (windowActor) => {
+		this.destroyWindowId = global.window_manager.connect('destroy', (_, windowActor) => {
 			const metaWindow = windowActor.get_meta_window();
 			const index = appWindows.indexOf(metaWindow);
 			if (index > -1) {
