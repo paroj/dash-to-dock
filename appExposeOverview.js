@@ -58,9 +58,8 @@ var AppExposeOverview = new Lang.Class({
 
 		// Only show application windows in thumbnails
 		const originalThumbnailFunction = this.originalOverviewFunction;
-		WorkspaceThumbnail.WorkspaceThumbnail.prototype._isOverviewWindow = function(win) {
-			const originalResult = originalThumbnailFunction(win);
-			const metaWindow = win.get_meta_window();
+		WorkspaceThumbnail.WorkspaceThumbnail.prototype._isOverviewWindow = function(metaWindow) {
+			const originalResult = originalThumbnailFunction(metaWindow);
 			return originalResult && appWindows.indexOf(metaWindow) > -1;
 		};
 
