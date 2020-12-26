@@ -51,9 +51,8 @@ var AppExposeOverview = new Lang.Class({
 		// Only show application windows in workspace
 		this.appWindows = appWindows;
 		const originalOverviewFunction = this.originalOverviewFunction;
-		Workspace.Workspace.prototype._isOverviewWindow = function(win) {
-			const originalResult = originalOverviewFunction(win);
-			const metaWindow = win.get_meta_window();
+		Workspace.Workspace.prototype._isOverviewWindow = function(metaWindow) {
+			const originalResult = originalOverviewFunction(metaWindow);
 			return originalResult && appWindows.indexOf(metaWindow) > -1;
 		};
 
